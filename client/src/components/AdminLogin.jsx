@@ -8,27 +8,46 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   
-  const handleSubmit = (e) => {
+  const handleRedirect = () => {
+    navigate('/admin/dashboard'); // change this to your target route
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
-    
-    // Simulate login API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      
-      // This is where you would typically validate credentials with your backend
-      console.log('Admin login attempt with:', { username, password });
-      
-      // For demo purposes only - in a real app, validation would happen server-side
-      if (username === 'admin' && password === 'password') {
-        console.log('Login successful');
-        // Redirect or update app state here
-      } else {
-        setError('Invalid username or password');
-      }
-    }, 1000);
+  
+    // try {
+    //   const response = await fetch('http://localhost:5000/admin/login', {  // Make sure this URL matches your backend
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     mode: 'no-cors',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ username, password }),
+    //   });
+  
+    //   const data = await response.json();
+    //   console.log(data)
+
+    //   // Check the response status and handle accordingly
+    //   if (response.ok) {
+    //     console.log('Login successful:', data);
+    //     navigate('/admin/dashboard'); // Redirect to admin dashboard on successful login
+    //   } else {
+    //     setError(data.message || 'Login failed');  // Display error message if login fails
+    //   }
+    // } catch (err) {
+    //   console.error('Error:', err);
+    //   setError('Server error or network issue'); // Display generic error message in case of a network or server issue
+    // } finally {
+    //   setIsSubmitting(false);  // Disable the submitting state once the request is complete
+    // }
+    navigate('/admin/dashboard');
+    setIsSubmitting(false);
   };
+  
+  
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -52,7 +71,7 @@ export default function AdminLogin() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autocomplete="off">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                 Username
@@ -112,6 +131,7 @@ export default function AdminLogin() {
             <div>
               <button
                 type="submit"
+                onClick={handleRedirect}
                 disabled={isSubmitting || !username || !password}
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                   isSubmitting || !username || !password

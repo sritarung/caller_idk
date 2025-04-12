@@ -3,9 +3,9 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginSelector from "./components/LoginSelector";
 import IndividualUserLogin from './components/IndividualUserLogin';
-import AdminLogin from './components/AdminLogin';
-import AdminRoute from './components/AdminRoute';
+import AdminLogin from './components/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard';
+import PersonalInfoForm from './components/PersonalInfoForm';
 
 function App() {
   return (
@@ -17,11 +17,10 @@ function App() {
         <Route
           path="/admin/dashboard"
           element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
+            <AdminDashboard/>
           }
         />
+        <Route path="/userForm" element={<PersonalInfoForm/>}/>
       </Routes>
     </Router>
   );

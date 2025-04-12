@@ -27,8 +27,7 @@ def extract_features(file_path, max_len=MAX_LEN):
         print(f"Error processing {file_path}: {e}")
         return None
 
-def main():
-    # Load the pre-trained classifier and the corresponding scaler
+def main(audio_file):
     try:
         model = joblib.load(MODEL_PATH)
         scaler = joblib.load(SCALER_PATH)
@@ -37,7 +36,6 @@ def main():
         return
 
     # Path to the audio file to classify
-    audio_file = "ElevenLabs_2025-04-12T08_51_09_with issues_ivc_sp100_s50_sb75_se0_b_m2.mp3"
     features = extract_features(audio_file)
 
     if features is None:
@@ -61,6 +59,5 @@ def main():
     print(f"Probability for AI: {ai_probability:.2f}")
     print(f"Classification result: {label}")
 
-if __name__ == "__main__":
-    main()
+
 

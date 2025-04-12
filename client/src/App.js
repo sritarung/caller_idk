@@ -20,7 +20,7 @@ function App() {
             <AdminDashboard/>
           }
         />
-        <Route path="/userForm" element={<PersonalInfoForm/>}/>
+        <Route path="/userform" element={<PersonalInfoForm/>}/>
       </Routes>
     </Router>
   );

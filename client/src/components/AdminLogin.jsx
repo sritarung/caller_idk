@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import {useNavigate} from "react-router-dom"
 
 export default function AdminLogin() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,11 +102,11 @@ export default function AdminLogin() {
                 </label>
               </div>
 
-              <div className="text-sm">
+              {/* <div className="text-sm">
                 <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                   Forgot your password?
                 </a>
-              </div>
+              </div> */}
             </div>
 
             <div>

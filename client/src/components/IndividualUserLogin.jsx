@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function IndividualUserLogin() {
+  const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

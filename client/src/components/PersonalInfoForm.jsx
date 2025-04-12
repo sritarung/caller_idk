@@ -1,220 +1,4 @@
-// import React, { useState } from 'react';
-// import axios from 'axios';
 
-// export default function UserForm() {
-//   const [formData, setFormData] = useState({
-//     first_name: '',
-//     middle_initial: '',
-//     last_name: '',
-//     last_four_digits: '',
-//     zip_code: '',
-//     human_voice: false,
-//     matching_voice: false,
-//     matching_face: false
-//   });
-
-//   const [validation, setValidation] = useState({
-//     first_name: null,
-//     middle_initial: null,
-//     last_name: null,
-//     last_four_digits: null,
-//     zip_code: null
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value, type, checked } = e.target;
-//     setFormData(prev => ({
-//       ...prev,
-//       [name]: type === 'checkbox' ? checked : value
-//     }));
-
-//     // Real-time validation
-//     if (name === 'first_name') {
-//       setValidation(prev => ({ ...prev, first_name: value === 'John' }));
-//     } else if (name === 'middle_initial') {
-//       setValidation(prev => ({ ...prev, middle_initial: value === 'D' }));
-//     } else if (name === 'last_name') {
-//       setValidation(prev => ({ ...prev, last_name: value === 'Doe' }));
-//     } else if (name === 'last_four_digits') {
-//       setValidation(prev => ({ ...prev, last_four_digits: value === '1234' }));
-//     } else if (name === 'zip_code') {
-//       setValidation(prev => ({ ...prev, zip_code: value === '12345' }));
-//     }
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const response = await axios.post('http://localhost:5001/userform', {
-//         first_name: formData.first_name,
-//         middle_initial: formData.middle_initial,
-//         last_name: formData.last_name,
-//         last_four_digits: formData.last_four_digits,
-//         zip_code: formData.zip_code
-//       });
-      
-//       alert('Form submitted successfully!');
-      
-//       // Reset form
-//       setFormData({
-//         first_name: '',
-//         middle_initial: '',
-//         last_name: '',
-//         last_four_digits: '',
-//         zip_code: '',
-//         human_voice: false,
-//         matching_voice: false,
-//         matching_face: false
-//       });
-      
-//       setValidation({
-//         first_name: null,
-//         middle_initial: null,
-//         last_name: null,
-//         last_four_digits: null,
-//         zip_code: null
-//       });
-  
-//     } catch (error) {
-//       console.error('Submission error:', error);
-//       alert('Submission failed!');
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-//       <h2 className="text-xl font-bold mb-6">Verification Form</h2>
-//       <form onSubmit={handleSubmit}>
-//         {/* First Name */}
-//         <div className="mb-4">
-//           <label className="block mb-1">First Name</label>
-//           <input
-//             type="text"
-//             name="first_name"
-//             value={formData.first_name}
-//             onChange={handleChange}
-//             className={`w-full p-2 border rounded ${
-//               validation.first_name === true ? 'border-green-500' : 
-//               validation.first_name === false ? 'border-red-500' : ''
-//             }`}
-//             required
-//           />
-//           {validation.first_name !== null && (
-//             <span className={`text-sm ${
-//               validation.first_name ? 'text-green-600' : 'text-red-600'
-//             }`}>
-//               {validation.first_name ? '✓ Valid' : '✗ Must be "John"'}
-//             </span>
-//           )}
-//         </div>
-
-//         {/* Middle Initial */}
-//         <div className="mb-4">
-//           <label className="block mb-1">Middle Initial</label>
-//           <input
-//             type="text"
-//             name="middle_initial"
-//             value={formData.middle_initial}
-//             onChange={handleChange}
-//             maxLength="1"
-//             className={`w-full p-2 border rounded ${
-//               validation.middle_initial === true ? 'border-green-500' : 
-//               validation.middle_initial === false ? 'border-red-500' : ''
-//             }`}
-//             required
-//           />
-//           {validation.middle_initial !== null && (
-//             <span className={`text-sm ${
-//               validation.middle_initial ? 'text-green-600' : 'text-red-600'
-//             }`}>
-//               {validation.middle_initial ? '✓ Valid' : '✗ Must be "D"'}
-//             </span>
-//           )}
-//         </div>
-
-//         {/* Last Name */}
-//         <div className="mb-4">
-//           <label className="block mb-1">Last Name</label>
-//           <input
-//             type="text"
-//             name="last_name"
-//             value={formData.last_name}
-//             onChange={handleChange}
-//             className={`w-full p-2 border rounded ${
-//               validation.last_name === true ? 'border-green-500' : 
-//               validation.last_name === false ? 'border-red-500' : ''
-//             }`}
-//             required
-//           />
-//           {validation.last_name !== null && (
-//             <span className={`text-sm ${
-//               validation.last_name ? 'text-green-600' : 'text-red-600'
-//             }`}>
-//               {validation.last_name ? '✓ Valid' : '✗ Must be "Doe"'}
-//             </span>
-//           )}
-//         </div>
-
-//         {/* Last 4 Digits */}
-//         <div className="mb-4">
-//           <label className="block mb-1">Last 4 Digits</label>
-//           <input
-//             type="text"
-//             name="last_four_digits"
-//             value={formData.last_four_digits}
-//             onChange={handleChange}
-//             maxLength="4"
-//             className={`w-full p-2 border rounded ${
-//               validation.last_four_digits === true ? 'border-green-500' : 
-//               validation.last_four_digits === false ? 'border-red-500' : ''
-//             }`}
-//             required
-//           />
-//           {validation.last_four_digits !== null && (
-//             <span className={`text-sm ${
-//               validation.last_four_digits ? 'text-green-600' : 'text-red-600'
-//             }`}>
-//               {validation.last_four_digits ? '✓ Valid' : '✗ Must be "1234"'}
-//             </span>
-//           )}
-//         </div>
-
-//         {/* Zip Code */}
-//         <div className="mb-4">
-//           <label className="block mb-1">Zip Code</label>
-//           <input
-//             type="text"
-//             name="zip_code"
-//             value={formData.zip_code}
-//             onChange={handleChange}
-//             maxLength="5"
-//             className={`w-full p-2 border rounded ${
-//               validation.zip_code === true ? 'border-green-500' : 
-//               validation.zip_code === false ? 'border-red-500' : ''
-//             }`}
-//             required
-//           />
-//           {validation.zip_code !== null && (
-//             <span className={`text-sm ${
-//               validation.zip_code ? 'text-green-600' : 'text-red-600'
-//             }`}>
-//               {validation.zip_code ? '✓ Valid' : '✗ Must be "12345"'}
-//             </span>
-//           )}
-//         </div>
-
-//         <button 
-//           type="submit"
-//           onClick = {handleSubmit}
-//           className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4"
-//           disabled={Object.values(validation).some(v => v === false)}
-//         >
-//           Submit Verification
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -251,11 +35,11 @@ export default function UserForm() {
     zip_code: "12345"
   };
 
-  const safelyValidate = (value, expectedValue) => {
+  const safelyValidate = (value) => {
     if (value === null || value === undefined) return false;
     const trimmedValue = String(value).trim();
     if (trimmedValue === '') return false;
-    return trimmedValue === expectedValue;
+    return true
   };
 
   const handleChange = (e) => {
@@ -268,15 +52,15 @@ export default function UserForm() {
     }));
 
     if (name === 'first_name') {
-      setValidation(prev => ({ ...prev, first_name: safelyValidate(safeValue, expectedValues.first_name) }));
+      setValidation(prev => ({ ...prev, first_name: safelyValidate(safeValue) }));
     } else if (name === 'middle_initial') {
-      setValidation(prev => ({ ...prev, middle_initial: safelyValidate(safeValue, expectedValues.middle_initial) }));
+      setValidation(prev => ({ ...prev, middle_initial: safelyValidate(safeValue) }));
     } else if (name === 'last_name') {
-      setValidation(prev => ({ ...prev, last_name: safelyValidate(safeValue, expectedValues.last_name) }));
+      setValidation(prev => ({ ...prev, last_name: safelyValidate(safeValue) }));
     } else if (name === 'last_four_digits') {
-      setValidation(prev => ({ ...prev, last_four_digits: safelyValidate(safeValue, expectedValues.last_four_digits) }));
+      setValidation(prev => ({ ...prev, last_four_digits: safelyValidate(safeValue) }));
     } else if (name === 'zip_code') {
-      setValidation(prev => ({ ...prev, zip_code: safelyValidate(safeValue, expectedValues.zip_code) }));
+      setValidation(prev => ({ ...prev, zip_code: safelyValidate(safeValue) }));
     }
   };
 
@@ -359,7 +143,7 @@ export default function UserForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
       <h2 className="text-xl font-bold mb-6">Verification Form</h2>
       
       {/* Progress Indicator */}
@@ -397,7 +181,7 @@ export default function UserForm() {
             />
             {validation.first_name === false && (
               <span className="text-sm text-red-600">
-                ✗ Must be "{expectedValues.first_name}"
+                ✗ Must be non-empty
               </span>
             )}
           </div>
@@ -417,7 +201,7 @@ export default function UserForm() {
             />
             {validation.middle_initial === false && (
               <span className="text-sm text-red-600">
-                ✗ Must be "{expectedValues.middle_initial}"
+                ✗ Must be non-empty
               </span>
             )}
           </div>
@@ -436,19 +220,19 @@ export default function UserForm() {
             />
             {validation.last_name === false && (
               <span className="text-sm text-red-600">
-                ✗ Must be "{expectedValues.last_name}"
+                ✗ Must be non-empty
               </span>
             )}
           </div>
 
           <button 
             onClick={handleNextStep}
-            // disabled={!validation.first_name || !validation.middle_initial || !validation.last_name}
+            disabled={!validation.first_name || !validation.middle_initial || !validation.last_name}
             className={`w-full py-2 px-4 text-white rounded ${
-              // validation.first_name && validation.middle_initial && validation.last_name
-              //   ? 
+              validation.first_name && validation.middle_initial && validation.last_name
+                ? 
               'bg-blue-500 hover:bg-blue-600'
-                // : 'bg-gray-400 cursor-not-allowed'
+              : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
             Next
@@ -467,6 +251,7 @@ export default function UserForm() {
               name="last_four_digits"
               value={formData.last_four_digits}
               onChange={handleChange}
+              minLength="4"
               maxLength="4"
               className={`w-full p-2 border rounded focus:ring focus:ring-blue-200 ${
                 validation.last_four_digits === true ? 'border-green-500' : 
@@ -476,7 +261,7 @@ export default function UserForm() {
             />
             {validation.last_four_digits === false && (
               <span className="text-sm text-red-600">
-                ✗ Must be "{expectedValues.last_four_digits}"
+                ✗ Must be non-empty
               </span>
             )}
           </div>
@@ -521,7 +306,7 @@ export default function UserForm() {
             />
             {validation.zip_code === false && (
               <span className="text-sm text-red-600">
-                ✗ Must be "{expectedValues.zip_code}"
+                ✗ Must be non-empty
               </span>
             )}
           </div>
@@ -535,10 +320,10 @@ export default function UserForm() {
             </button>
             <button 
               onClick={handleNextStep} // This will trigger final submission
-              // disabled={!validation.zip_code}
-              className={`py-2 px-4 text-white rounded ${
+              disabled={!validation.zip_code}
+              className={`py-2 px-4 text-white rounded ${validation.zip_code?
                'bg-green-500 hover:bg-green-600'
-                  // : 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gray-400 cursor-not-allowed'
               }`}
             >
               Complete Verification

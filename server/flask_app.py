@@ -1,48 +1,49 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 
-# Initialize FastAPI app
-app = FastAPI()
+# Connect to SQLite database (it will create the file if it doesn't exist)
+conn = sqlite3.connect('users.db')
 
-# Enable CORS for frontend to fetch
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # adjust for production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Create a cursor object to execute SQL commands
+cursor = conn.cursor()
 
-# Endpoint to get all user data
-@app.get("/admin/dashboard")
-def get_all_user_data():
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users")
-    rows = cursor.fetchall()
-    columns = [column[0] for column in cursor.description]
-    conn.close()
+data = {
+    "first_name": "John",
+    "middle_initial": "A",
+    "last_name": "Adams",
+    "last_four_digits": "1234",
+    "zip_code": "12345"
+    
+}
 
-    # Format data into a list of dictionaries
-    data = [dict(zip(columns, row)) for row in rows]
-    return {"users": data}
-
-# Endpoint to submit user form data
-@app.post("/userform")
-async def submit_form(request: Request):
-    data = await request.json()
-
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-
-    # You’ll need to match keys to your table schema
-    c.execute(
-        "INSERT INTO users (name, email, date, ...) VALUES (?, ?, ?, ...)",  # Adjust columns accordingly
-        (data["name"], data["email"], data["date"], ...)  # Ensure the keys match the data structure
+# Create the table with the correct column types and no syntax errors
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        first_name TEXT,
+        middle_initial TEXT,
+        last_name TEXT,
+        last_four_digits TEXT,
+        zip_code TEXT,
+        human_voice BOOLEAN DEFAULT 0,
+        matching_voice BOOLEAN DEFAULT 0,
+        matching_face BOOLEAN DEFAULT 0
     )
+''')
 
-    conn.commit()
-    conn.close()
+# Optional: Insert sample data (with default values for booleans)
+cursor.execute('''
+    INSERT INTO users (first_name, middle_initial, last_name, last_four_digits, zip_code)
+    VALUES (?, ?, ?, ?, ?)
+''', (
+    data["first_name"],
+    data["middle_initial"],
+    data["last_name"],
+    data["last_four_digits"],
+    data["zip_code"]
+))
 
-    return {"message": "Form data saved successfully"}
+# Commit the changes and close the connection
+conn.commit()
+conn.close()
+
+print("Database, table, and sample row created successfully.")

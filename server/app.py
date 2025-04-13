@@ -3,19 +3,18 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 import sqlite3
 from contextlib import closing
+from same_voice import same_voice
+import os
+from pydub import AudioSegment
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 DATABASE = 'users.db'
 
-# Configuration
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'wav', 'mp3'}
-THRESHOLD = 0.4  # For SpeechBrain verification
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize SpeechBrain (only once when server starts)
 try:
@@ -45,18 +44,19 @@ def get_latest_verification():
 @app.route('/userform', methods=['POST'])
 def handle_userform():
     data = request.get_json()
+    print(f"Received form data: {data}")  # Debug log
     
     try:
-        # Convert to verification booleans
+        # Use ACTUAL verification results from frontend
         verification_data = {
             'first_name': data['first_name'] == 'John',
             'middle_initial': data['middle_initial'] == 'D',
             'last_name': data['last_name'] == 'Doe',
             'last_four_digits': data['last_four_digits'] == '1234',
             'zip_code': data['zip_code'] == '12345',
-            'human_voice': False,  # As per requirements
-            'matching_voice': False,
-            'matching_face': False
+            'human_voice': data.get('human_voice', False),  # Get from request
+            'matching_voice': data.get('matching_voice', False),  # Get from request
+            'matching_face': data.get('matching_face', False)
         }
 
         with closing(get_db()) as conn:
@@ -71,11 +71,13 @@ def handle_userform():
                 int(verification_data['last_name']),
                 int(verification_data['last_four_digits']),
                 int(verification_data['zip_code']),
-                0, 0, 0  # Biometric fields
+                int(verification_data['human_voice']),  # Actual value
+                int(verification_data['matching_voice']),  # Actual value
+                int(verification_data['matching_face'])
             ))
             conn.commit()
         
-        # Emit to all connected dashboard clients
+        # Emit ACTUAL verification status
         socketio.emit('verification_update', verification_data)
         
         return jsonify({
@@ -84,6 +86,7 @@ def handle_userform():
         })
 
     except Exception as e:
+        print(f"Error saving user form: {str(e)}")  # Detailed error logging
         return jsonify({'error': str(e)}), 500
 
 @app.route('/admin/dashboard')
@@ -102,51 +105,36 @@ def handle_connect():
     if record:
         socketio.emit('verification_update', dict(record))
 
-# New voice verification endpoint
-@app.route('/verify-voice', methods=['POST'])
+@app.route("/verify-voice", methods=["POST"])
 def verify_voice():
-    """New endpoint specifically for voice verification"""
     if 'audio' not in request.files:
-        return jsonify({"error": "No audio file provided"}), 400
-    
-    file = request.files['audio']
-    if not file or file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    
-    if not file.filename.lower().endswith('.wav'):
-        return jsonify({"error": "Only WAV files are supported"}), 400
+        return jsonify({"error": "No audio file received"}), 400
+
+    audio_file = request.files["audio"]
+    filename = secure_filename(audio_file.filename)
+    raw_path = os.path.join(UPLOAD_FOLDER, filename)
+    wav_path = os.path.join(UPLOAD_FOLDER, "converted.wav")
 
     try:
-        # Save to temporary file
-        temp_dir = tempfile.mkdtemp()
-        temp_path = os.path.join(temp_dir, secure_filename(file.filename))
-        file.save(temp_path)
-        
-        # Verify using SpeechBrain
-        if recognizer is None:
-            raise RuntimeError("Voice verification system not available")
-            
-        score, decision = recognizer.verify_files("pragyam_sample.wav", temp_path)
-        score = score.item()  # Convert tensor to float
-        
-        # Clean up
-        os.remove(temp_path)
-        os.rmdir(temp_dir)
-        
-        return jsonify({
-            "success": True,
-            "score": score,
-            "is_match": bool(decision),
-            "threshold": THRESHOLD
-        })
-        
+        # Save raw upload
+        audio_file.save(raw_path)
+
+        # Convert to proper wav format (16-bit PCM, mono)
+        sound = AudioSegment.from_file(raw_path)
+        sound = sound.set_channels(1).set_frame_rate(16000)
+        sound.export(wav_path, format="wav")
+
+        # Run voice verification
+        is_match = same_voice(wav_path)
+
+        return jsonify({"is_match": is_match})
+
     except Exception as e:
-        # Clean up if error occurs
-        if 'temp_path' in locals() and os.path.exists(temp_path):
-            os.remove(temp_path)
-        if 'temp_dir' in locals() and os.path.exists(temp_dir):
-            os.rmdir(temp_dir)
         return jsonify({"error": str(e)}), 500
+    finally:
+        # Clean up
+        if os.path.exists(raw_path): os.remove(raw_path)
+        if os.path.exists(wav_path): os.remove(wav_path)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5001, debug=True)

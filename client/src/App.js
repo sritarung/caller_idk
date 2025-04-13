@@ -6,6 +6,8 @@ import IndividualUserLogin from './components/IndividualUserLogin';
 import AdminLogin from './components/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard';
 import PersonalInfoForm from './components/PersonalInfoForm';
+import FaceRecognition from './components/FaceRecognition';
+import SuccessPage from './pages/Success';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           }
         />
         <Route path="/userform" element={<PersonalInfoForm/>}/>
+        <Route path="/face-recognition" element={<FaceRecognition/>} />
+        <Route path="/success" element={<SuccessPage/>} />
       </Routes>
     </Router>
   );

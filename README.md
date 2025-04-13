@@ -62,4 +62,35 @@ Key Features:
 ## 📚 What We Learned
 
 - Modern deepfake models are alarmingly advanced.
-- Ethical AI is crucial — protection > gimm
+- Ethical AI is crucial — protection > gimmick.
+- Building **detection** and **prevention** in tandem is tough but powerful.
+
+---
+
+## 🚀 What's Next for CallerIDK
+
+- Integrate with **VOIP and customer service platforms** in finance.
+- Add **multilingual support** for global user base.
+- Expand training with new-gen models like **GPT-4 Voice**.
+- Package obfuscation as a standalone **API** for fintech apps.
+- Build a **browser extension** to detect scams on Zoom, WhatsApp, and other communication tools.
+
+---
+
+## 💻 Tech Stack
+
+- **Frontend**: React, Vite
+- **Backend**: Flask
+- **Deployment**: Vercel
+- **ML**: Custom-trained voice deepfake detection model
+- **Audio Engineering**: Obfuscation layer with ultrasonic embedding
+
+---
+
+## 📬 Contact
+
+Have feedback or ideas? We'd love to hear from you.
+
+---
+
+**CallerIDK** – Because not every voice is what it seems.

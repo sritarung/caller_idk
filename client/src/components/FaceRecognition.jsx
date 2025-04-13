@@ -63,9 +63,10 @@ const FaceRecognitionComponent = () => {
     };
   }, []);
 
-  const verifyFac = async() =>{
+  const verifyFace = async() => {
     navigate('/success');
   }
+  
   const captureWebcamImage = () => {
     try {
       const canvas = document.createElement('canvas');
@@ -157,138 +158,143 @@ const FaceRecognitionComponent = () => {
     }
   };
   
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Face Verification
-        </h2>
+    <div className="min-h-screen flex items-center justify-center p-6" style={{
+      background: 'linear-gradient(135deg, #f0f9fb 0%, #e0f2f7 100%)'
+    }}>
+      <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-cyan-500 to-teal-400"></div>
         
-        {modelsLoading ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-            <p className="text-gray-600 font-medium">Loading face recognition models...</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Left column: Webcam and capture */}
-              <div className="flex flex-col">
-                <div className="relative rounded-lg overflow-hidden bg-gray-100 border-2 border-blue-400">
-                  {!webcamImage ? (
-                    <video 
-                      ref={webcamRef}
-                      autoPlay
-                      muted
-                      playsInline
-                      className="w-full aspect-video object-cover"
-                    />
-                  ) : (
-                    <div className="relative">
-                      <img 
-                        src={webcamImage} 
-                        alt="Captured" 
+        <div className="p-6 md:p-8">
+          <h2 className="text-2xl font-bold text-center mb-8" style={{ color: '#0097b2' }}>
+            Face Verification
+          </h2>
+          
+          {modelsLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader className="w-12 h-12 animate-spin mb-4" style={{ color: '#0097b2' }} />
+              <p className="text-gray-600 font-medium">Loading face recognition models...</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Left column: Webcam and capture */}
+                <div className="flex flex-col">
+                  <div className="relative rounded-lg overflow-hidden bg-gray-50 shadow-sm border border-gray-100">
+                    {!webcamImage ? (
+                      <video 
+                        ref={webcamRef}
+                        autoPlay
+                        muted
+                        playsInline
                         className="w-full aspect-video object-cover"
                       />
-                      <button
-                        onClick={clearCapturedImage}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-                        aria-label="Clear captured image"
-                      >
-                        <RefreshCw className="w-5 h-5" />
-                      </button>
+                    ) : (
+                      <div className="relative">
+                        <img 
+                          src={webcamImage} 
+                          alt="Captured" 
+                          className="w-full aspect-video object-cover"
+                        />
+                        <button
+                          onClick={clearCapturedImage}
+                          className="absolute top-2 right-2 p-1 rounded-full text-white transition-colors"
+                          style={{ backgroundColor: '#0097b2' }}
+                          aria-label="Clear captured image"
+                        >
+                          <RefreshCw className="w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!webcamImage ? (
+                    <button 
+                      onClick={captureWebcamImage}
+                      className="mt-4 flex items-center justify-center gap-2 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                      style={{ backgroundColor: '#0097b2' }}
+                    >
+                      <Camera className="w-5 h-5" />
+                      Capture Image
+                    </button>
+                  ) : (
+                    <div className="mt-4 text-center text-sm text-gray-500">
+                      Image captured! Click the refresh button to retake.
                     </div>
                   )}
                 </div>
                 
-                {!webcamImage ? (
-                  <button 
-                    onClick={captureWebcamImage}
-                    className="mt-4 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-                  >
-                    <Camera className="w-5 h-5" />
-                    Capture Image
-                  </button>
-                ) : (
-                  <div className="mt-4 text-center text-sm text-gray-500">
-                    Image captured! Click the refresh button to retake.
-                  </div>
-                )}
-              </div>
-              
-              {/* Right column: Reference image */}
-              <div className="flex flex-col">
-                <div className="bg-gray-100 rounded-lg overflow-hidden border-2 border-amber-400">
-                  <div className="relative">
-                    <img
-                      src={defaultImagePath}
-                      alt="Reference"
-                      className="w-full aspect-video object-cover"
-                      onError={(e) => {
-                        console.error('Failed to load default image');
-                        e.target.src = '/api/placeholder/400/300';
-                        e.target.alt = 'Image not found';
-                      }}
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-amber-400 bg-opacity-80 py-2 px-3">
-                      <p className="text-amber-900 font-medium text-sm">Reference Image</p>
+                {/* Right column: Reference image */}
+                <div className="flex flex-col">
+                  <div className="bg-gray-50 rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div className="relative">
+                      <img
+                        src={defaultImagePath}
+                        alt="Reference"
+                        className="w-full aspect-video object-cover"
+                        onError={(e) => {
+                          console.error('Failed to load default image');
+                          e.target.src = '/api/placeholder/400/300';
+                          e.target.alt = 'Image not found';
+                        }}
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 py-2 px-3" style={{ backgroundColor: 'rgba(0, 151, 178, 0.8)' }}>
+                        <p className="text-white font-medium text-sm">Reference Image</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="mt-4 text-center text-sm text-gray-500">
-                  Your face will be compared to this reference image
+                  
+                  <div className="mt-4 text-center text-sm text-gray-500">
+                    Your face will be compared to this reference image
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Verification Section */}
-            <div className="mt-8 flex flex-col items-center">
-              <button 
-                onClick={verifyFac}
-                
-                className={`flex items-center justify-center gap-2 py-3 px-8 rounded-lg font-bold transition-all shadow-md w-full md:w-64 ${
-                  'bg-green-500 hover:bg-green-600 text-white'
-                }`}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader className="w-5 h-5 animate-spin" />
-                    Verifying...
-                  </>
-                ) : (
-                  <>
-                    Verify Identity
-                  </>
-                )}
-              </button>
               
-              {isVerified !== null && (
-                <div className={`mt-6 flex items-center p-4 rounded-lg ${
-                  isVerified 
-                    ? 'bg-green-100 text-green-800 border border-green-200' 
-                    : 'bg-red-100 text-red-800 border border-red-200'
-                }`}>
-                  {isVerified ? (
+              {/* Verification Section */}
+              <div className="mt-8 flex flex-col items-center">
+                <button 
+                  onClick={verifyFace}
+                  className="flex items-center justify-center gap-2 py-3 px-8 rounded-lg font-medium transition-all shadow-md w-full md:w-64 text-white"
+                  style={{ backgroundColor: '#0097b2' }}
+                >
+                  {isLoading ? (
                     <>
-                      <Check className="w-6 h-6 mr-2 text-green-500" />
-                      <span className="font-medium">Identity verified! Redirecting...</span>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      Verifying...
                     </>
                   ) : (
                     <>
-                      <X className="w-6 h-6 mr-2 text-red-500" />
-                      <span className="font-medium">Verification failed. Please try again.</span>
+                      Verify Identity
                     </>
                   )}
-                </div>
-              )}
-            </div>
-          </>
-        )}
+                </button>
+                
+                {isVerified !== null && (
+                  <div className={`mt-6 flex items-center p-4 rounded-lg ${
+                    isVerified 
+                      ? 'bg-teal-50 text-teal-800 border border-teal-100' 
+                      : 'bg-red-50 text-red-800 border border-red-100'
+                  }`}>
+                    {isVerified ? (
+                      <>
+                        <Check className="w-6 h-6 mr-2 text-teal-500" />
+                        <span className="font-medium">Identity verified! Redirecting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <X className="w-6 h-6 mr-2 text-red-500" />
+                        <span className="font-medium">Verification failed. Please try again.</span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
       
-      <div className="mt-6 text-center text-sm text-gray-500">
+      <div className="absolute bottom-4 text-center text-xs text-gray-400">
         <p>For security purposes, this verification is only valid for the current session.</p>
       </div>
     </div>
